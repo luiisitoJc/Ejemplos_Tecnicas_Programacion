@@ -1,0 +1,73 @@
+# Definimos una clase base llamada Animal
+class Animal:
+    def __init__(self, nombre, edad):
+        # Atributos protegidos (encapsulación)
+        self._nombre = nombre
+        self._edad = edad
+
+    # Método para obtener el nombre del animal (encapsulación)
+    def get_nombre(self):
+        return self._nombre
+
+    # Método para obtener la edad del animal (encapsulación)
+    def get_edad(self):
+        return self._edad
+
+    # Método para emitir un sonido (polimorfismo: este método será sobrescrito en las clases derivadas)
+    def emitir_sonido(self):
+        pass
+
+    # Método para describir al animal
+    def describir(self):
+        print(f"Este es {self._nombre} y tiene {self._edad} años.")
+
+# Clase derivada Perro que hereda de Animal
+class Perro(Animal):
+    def __init__(self, nombre, edad, raza):
+        # Llamamos al constructor de la clase base
+        super().__init__(nombre, edad)
+        # Atributo específico de la clase derivada
+        self.raza = raza
+
+    # Sobrescribimos el método emitir_sonido (polimorfismo)
+    def emitir_sonido(self):
+        return "Guau!"
+
+    # Método específico para la clase Perro
+    def describir_raza(self):
+        print(f"{self.get_nombre()} es de la raza {self.raza}.")
+
+# Clase derivada Gato que hereda de Animal
+class Gato(Animal):
+    def __init__(self, nombre, edad, color):
+        # Llamamos al constructor de la clase base
+        super().__init__(nombre, edad)
+        # Atributo específico de la clase derivada
+        self.color = color
+
+    # Sobrescribimos el método emitir_sonido (polimorfismo)
+    def emitir_sonido(self):
+        return "Miau!"
+
+    # Método específico para la clase Gato
+    def describir_color(self):
+        print(f"{self.get_nombre()} es de color {self.color}.")
+
+# Función principal para crear instancias y demostrar la funcionalidad
+def main():
+    # Creamos instancias de las clases derivadas
+    perro = Perro("Firulais", 5, "Labrador")
+    gato = Gato("Michi", 3, "Negro")
+
+    # Utilizamos los métodos de las instancias para demostrar herencia, encapsulación y polimorfismo
+    perro.describir()  # Método heredado de Animal
+    perro.describir_raza()  # Método específico de Perro
+    print(f"{perro.get_nombre()} dice {perro.emitir_sonido()}")  # Método sobrescrito (polimorfismo)
+
+    gato.describir()  # Método heredado de Animal
+    gato.describir_color()  # Método específico de Gato
+    print(f"{gato.get_nombre()} dice {gato.emitir_sonido()}")  # Método sobrescrito (polimorfismo)
+
+# Ejecutamos la función principal
+if __name__ == "__main__":
+    main()
