@@ -11,7 +11,7 @@ class Personaje:
         print(self.nombre, ":", sep="")
         print("·Fuerza:", self.fuerza)
         print("·Inteligencia:", self.inteligencia)
-        print("·Defensa:", self.defensa)
+        print("·Defensa:, self.defensa)
         print("·Vida:", self.vida)
 
     def subir_nivel(self, fuerza, inteligencia, defensa):
