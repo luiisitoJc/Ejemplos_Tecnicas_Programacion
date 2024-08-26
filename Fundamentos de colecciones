@@ -1,0 +1,188 @@
+import json
+from typing import Dict, List, Optional
+
+class Producto:
+    def __init__(self, id: int, nombre: str, cantidad: int, precio: float):
+        self._id = id
+        self._nombre = nombre
+        self._cantidad = cantidad
+        self._precio = precio
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def nombre(self) -> str:
+        return self._nombre
+
+    @property
+    def cantidad(self) -> int:
+        return self._cantidad
+
+    @cantidad.setter
+    def cantidad(self, valor: int):
+        if valor >= 0:
+            self._cantidad = valor
+        else:
+            raise ValueError("La cantidad no puede ser negativa")
+
+    @property
+    def precio(self) -> float:
+        return self._precio
+
+    @precio.setter
+    def precio(self, valor: float):
+        if valor >= 0:
+            self._precio = valor
+        else:
+            raise ValueError("El precio no puede ser negativo")
+
+    def __str__(self) -> str:
+        return f"ID: {self._id}, Nombre: {self._nombre}, Cantidad: {self._cantidad}, Precio: ${self._precio:.2f}"
+
+    def to_dict(self) -> Dict:
+        return {
+            "id": self._id,
+            "nombre": self._nombre,
+            "cantidad": self._cantidad,
+            "precio": self._precio
+        }
+
+class Inventario:
+    def __init__(self):
+        self._productos: Dict[int, Producto] = {}
+
+    def agregar_producto(self, producto: Producto) -> None:
+        if producto.id not in self._productos:
+            self._productos[producto.id] = producto
+        else:
+            raise ValueError(f"Ya existe un producto con el ID {producto.id}")
+
+    def eliminar_producto(self, id: int) -> None:
+        if id in self._productos:
+            del self._productos[id]
+        else:
+            raise ValueError(f"No existe un producto con el ID {id}")
+
+    def actualizar_cantidad(self, id: int, nueva_cantidad: int) -> None:
+        if id in self._productos:
+            self._productos[id].cantidad = nueva_cantidad
+        else:
+            raise ValueError(f"No existe un producto con el ID {id}")
+
+    def actualizar_precio(self, id: int, nuevo_precio: float) -> None:
+        if id in self._productos:
+            self._productos[id].precio = nuevo_precio
+        else:
+            raise ValueError(f"No existe un producto con el ID {id}")
+
+    def buscar_por_nombre(self, nombre: str) -> List[Producto]:
+        return [p for p in self._productos.values() if nombre.lower() in p.nombre.lower()]
+
+    def mostrar_todos(self) -> List[Producto]:
+        return list(self._productos.values())
+
+    def guardar_en_archivo(self, nombre_archivo: str) -> None:
+        with open(nombre_archivo, 'w') as f:
+            json.dump([p.to_dict() for p in self._productos.values()], f)
+
+    def cargar_desde_archivo(self, nombre_archivo: str) -> None:
+        try:
+            with open(nombre_archivo, 'r') as f:
+                datos = json.load(f)
+                self._productos = {p['id']: Producto(**p) for p in datos}
+        except FileNotFoundError:
+            print(f"El archivo {nombre_archivo} no existe. Se iniciará con un inventario vacío.")
+
+def mostrar_menu() -> None:
+    print("\n--- Menú de Gestión de Inventario ---")
+    print("1. Agregar producto")
+    print("2. Eliminar producto")
+    print("3. Actualizar cantidad")
+    print("4. Actualizar precio")
+    print("5. Buscar producto por nombre")
+    print("6. Mostrar todos los productos")
+    print("7. Guardar inventario")
+    print("8. Cargar inventario")
+    print("0. Salir")
+
+def main():
+    inventario = Inventario()
+    archivo_inventario = "inventario.json"
+
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción: ")
+
+        if opcion == "1":
+            id = int(input("ID del producto: "))
+            nombre = input("Nombre del producto: ")
+            cantidad = int(input("Cantidad: "))
+            precio = float(input("Precio: "))
+            try:
+                inventario.agregar_producto(Producto(id, nombre, cantidad, precio))
+                print("Producto agregado exitosamente.")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == "2":
+            id = int(input("ID del producto a eliminar: "))
+            try:
+                inventario.eliminar_producto(id)
+                print("Producto eliminado exitosamente.")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == "3":
+            id = int(input("ID del producto: "))
+            nueva_cantidad = int(input("Nueva cantidad: "))
+            try:
+                inventario.actualizar_cantidad(id, nueva_cantidad)
+                print("Cantidad actualizada exitosamente.")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == "4":
+            id = int(input("ID del producto: "))
+            nuevo_precio = float(input("Nuevo precio: "))
+            try:
+                inventario.actualizar_precio(id, nuevo_precio)
+                print("Precio actualizado exitosamente.")
+            except ValueError as e:
+                print(f"Error: {e}")
+
+        elif opcion == "5":
+            nombre = input("Nombre del producto a buscar: ")
+            productos = inventario.buscar_por_nombre(nombre)
+            if productos:
+                for producto in productos:
+                    print(producto)
+            else:
+                print("No se encontraron productos con ese nombre.")
+
+        elif opcion == "6":
+            productos = inventario.mostrar_todos()
+            if productos:
+                for producto in productos:
+                    print(producto)
+            else:
+                print("El inventario está vacío.")
+
+        elif opcion == "7":
+            inventario.guardar_en_archivo(archivo_inventario)
+            print(f"Inventario guardado en {archivo_inventario}")
+
+        elif opcion == "8":
+            inventario.cargar_desde_archivo(archivo_inventario)
+            print(f"Inventario cargado desde {archivo_inventario}")
+
+        elif opcion == "0":
+            print("Gracias por usar el sistema de gestión de inventario. ¡Hasta luego!")
+            break
+
+        else:
+            print("Opción no válida. Por favor, intente de nuevo.")
+
+if __name__ == "__main__":
+    main()
