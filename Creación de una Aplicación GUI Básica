@@ -1,0 +1,73 @@
+import tkinter as tk
+from tkinter import messagebox
+
+class AplicacionGUI:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Gestión de Datos - GUI Mejorada")
+        self.root.geometry("400x350")
+
+        # Frame para entrada de datos
+        self.frame_input = tk.Frame(root)
+        self.frame_input.pack(pady=10)
+
+        # Etiqueta y campo de texto
+        self.label = tk.Label(self.frame_input, text="Ingrese información:")
+        self.label.grid(row=0, column=0, padx=5)
+        self.entry = tk.Entry(self.frame_input, width=30)
+        self.entry.grid(row=0, column=1, padx=5)
+
+        # Botón Agregar
+        self.add_button = tk.Button(self.frame_input, text="Agregar", command=self.agregar_informacion)
+        self.add_button.grid(row=0, column=2, padx=5)
+
+        # Frame para lista de datos
+        self.frame_list = tk.Frame(root)
+        self.frame_list.pack(pady=10)
+
+        # Lista para mostrar datos con Scrollbar
+        self.scrollbar = tk.Scrollbar(self.frame_list)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.lista_datos = tk.Listbox(self.frame_list, width=50, height=10, yscrollcommand=self.scrollbar.set)
+        self.lista_datos.pack(pady=10)
+        self.scrollbar.config(command=self.lista_datos.yview)
+
+        # Frame para botones de acción
+        self.frame_buttons = tk.Frame(root)
+        self.frame_buttons.pack(pady=10)
+
+        # Botón Limpiar
+        self.clear_button = tk.Button(self.frame_buttons, text="Limpiar Todo", command=self.limpiar_informacion)
+        self.clear_button.grid(row=0, column=0, padx=10)
+
+        # Botón Eliminar seleccionado
+        self.delete_button = tk.Button(self.frame_buttons, text="Eliminar Seleccionado", command=self.eliminar_seleccionado)
+        self.delete_button.grid(row=0, column=1, padx=10)
+
+    def agregar_informacion(self):
+        informacion = self.entry.get()
+        if informacion:
+            self.lista_datos.insert(tk.END, informacion)
+            self.entry.delete(0, tk.END)  # Limpiar campo de texto
+        else:
+            messagebox.showwarning("Entrada Vacía", "Por favor ingrese información.")
+
+    def limpiar_informacion(self):
+        self.entry.delete(0, tk.END)
+        self.lista_datos.delete(0, tk.END)
+
+    def eliminar_seleccionado(self):
+        try:
+            seleccion = self.lista_datos.curselection()
+            if seleccion:
+                self.lista_datos.delete(seleccion)
+            else:
+                messagebox.showwarning("Selección Vacía", "Por favor seleccione un elemento para eliminar.")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+# Inicialización de la ventana principal
+root = tk.Tk()
+app = AplicacionGUI(root)
+root.mainloop()
