@@ -1,0 +1,102 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+from tkcalendar import Calendar
+from datetime import datetime
+
+class EventApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Gestor de Eventos")
+        self.root.geometry("600x400")
+
+        # Frames
+        frame_top = tk.Frame(self.root)
+        frame_top.pack(pady=10)
+
+        frame_mid = tk.Frame(self.root)
+        frame_mid.pack(pady=10)
+
+        frame_bottom = tk.Frame(self.root)
+        frame_bottom.pack(pady=10)
+
+        # TreeView para mostrar eventos
+        self.tree = ttk.Treeview(frame_top, columns=("Fecha", "Hora", "Descripción"), show="headings")
+        self.tree.heading("Fecha", text="Fecha")
+        self.tree.heading("Hora", text="Hora")
+        self.tree.heading("Descripción", text="Descripción")
+        self.tree.pack()
+
+        # Labels y Entries para entrada de datos
+        tk.Label(frame_mid, text="Fecha (dd/mm/yyyy):").grid(row=0, column=0, padx=10, pady=5)
+        self.entry_fecha = tk.Entry(frame_mid)
+        self.entry_fecha.grid(row=0, column=1)
+
+        tk.Label(frame_mid, text="Hora (HH:MM):").grid(row=1, column=0, padx=10, pady=5)
+        self.entry_hora = tk.Entry(frame_mid)
+        self.entry_hora.grid(row=1, column=1)
+
+        tk.Label(frame_mid, text="Descripción:").grid(row=2, column=0, padx=10, pady=5)
+        self.entry_desc = tk.Entry(frame_mid)
+        self.entry_desc.grid(row=2, column=1)
+
+        # Botones
+        tk.Button(frame_bottom, text="Agregar Evento", command=self.add_event).grid(row=0, column=0, padx=10, pady=10)
+        tk.Button(frame_bottom, text="Eliminar Evento Seleccionado", command=self.delete_event).grid(row=0, column=1, padx=10, pady=10)
+        tk.Button(frame_bottom, text="Salir", command=self.root.quit).grid(row=0, column=2, padx=10, pady=10)
+
+        # DatePicker para selección de fechas (con Calendar)
+        tk.Button(frame_mid, text="Seleccionar Fecha", command=self.open_datepicker).grid(row=0, column=2)
+
+    def open_datepicker(self):
+        # Ventana emergente para seleccionar la fecha
+        def pick_date():
+            self.entry_fecha.delete(0, tk.END)
+            self.entry_fecha.insert(0, cal.get_date())
+            top.destroy()
+
+        top = tk.Toplevel(self.root)
+        cal = Calendar(top, selectmode="day", date_pattern="dd/mm/yyyy")
+        cal.pack(pady=20)
+
+        tk.Button(top, text="Seleccionar", command=pick_date).pack(pady=20)
+
+    def add_event(self):
+        # Validar entradas
+        fecha = self.entry_fecha.get()
+        hora = self.entry_hora.get()
+        desc = self.entry_desc.get()
+
+        if not (fecha and hora and desc):
+            messagebox.showwarning("Advertencia", "Por favor, rellene todos los campos.")
+            return
+
+        try:
+            datetime.strptime(fecha, "%d/%m/%Y")
+            datetime.strptime(hora, "%H:%M")
+        except ValueError:
+            messagebox.showerror("Error", "Formato de fecha u hora incorrecto.")
+            return
+
+        # Agregar evento a TreeView
+        self.tree.insert("", "end", values=(fecha, hora, desc))
+        self.clear_entries()
+
+    def delete_event(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showwarning("Advertencia", "Seleccione un evento para eliminar.")
+            return
+
+        confirm = messagebox.askyesno("Confirmación", "¿Está seguro de que desea eliminar este evento?")
+        if confirm:
+            self.tree.delete(selected_item)
+
+    def clear_entries(self):
+        self.entry_fecha.delete(0, tk.END)
+        self.entry_hora.delete(0, tk.END)
+        self.entry_desc.delete(0, tk.END)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = EventApp(root)
+    root.mainloop()
