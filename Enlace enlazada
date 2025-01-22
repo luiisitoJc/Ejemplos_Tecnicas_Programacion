@@ -1,0 +1,61 @@
+public class Nodo
+{
+    public int Valor;
+    public Nodo Siguiente;
+
+    public Nodo(int valor)
+    {
+        Valor = valor;
+        Siguiente = null;
+    }
+}
+
+public class ListaEnlazada
+{
+    public Nodo Cabeza;
+
+    public void Agregar(int valor)
+    {
+        Nodo nuevoNodo = new Nodo(valor);
+        if (Cabeza == null)
+        {
+            Cabeza = nuevoNodo;
+        }
+        else
+        {
+            Nodo temp = Cabeza;
+            while (temp.Siguiente != null)
+            {
+                temp = temp.Siguiente;
+            }
+            temp.Siguiente = nuevoNodo;
+        }
+    }
+
+    public void Invertir()
+    {
+        Nodo anterior = null;
+        Nodo actual = Cabeza;
+        Nodo siguiente = null;
+
+        while (actual != null)
+        {
+            siguiente = actual.Siguiente; // Guardar el siguiente nodo
+            actual.Siguiente = anterior;  // Invertir el enlace
+            anterior = actual;            // Mover anterior hacia adelante
+            actual = siguiente;          // Mover actual hacia adelante
+        }
+        Cabeza = anterior; // Actualizar la cabeza de la lista
+    }
+
+    public void Imprimir()
+    {
+        Nodo temp = Cabeza;
+        while (temp != null)
+        {
+            Console.Write(temp.Valor + " ");
+            temp = temp.Siguiente;
+        }
+        Console.WriteLine();
+    }
+}
