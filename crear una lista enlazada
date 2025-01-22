@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Crear la lista enlazada con 50 números aleatorios
+        LinkedList<int> linkedList = CreateRandomLinkedList(50, 1, 999);
+
+        // Leer el rango de valores desde el teclado
+        Console.Write("Ingrese el valor mínimo del rango: ");
+        int minValue = int.Parse(Console.ReadLine());
+        Console.Write("Ingrese el valor máximo del rango: ");
+        int maxValue = int.Parse(Console.ReadLine());
+
+        // Eliminar los nodos fuera del rango
+        RemoveOutOfRangeNodes(linkedList, minValue, maxValue);
+
+        // Imprimir la lista enlazada resultante
+        PrintLinkedList(linkedList);
+    }
+
+    static LinkedList<int> CreateRandomLinkedList(int count, int minValue, int maxValue)
+    {
+        LinkedList<int> linkedList = new LinkedList<int>();
+        Random random = new Random();
+
+        for (int i = 0; i < count; i++)
+        {
+            linkedList.AddLast(random.Next(minValue, maxValue + 1));
+        }
+
+        return linkedList;
+    }
+
+    static void RemoveOutOfRangeNodes(LinkedList<int> linkedList, int minValue, int maxValue)
+    {
+        LinkedListNode<int> current = linkedList.First;
+        while (current != null)
+        {
+            if (current.Value < minValue || current.Value > maxValue)
+            {
+                LinkedListNode<int> nodeToRemove = current;
+                current = current.Next;
+                linkedList.Remove(nodeToRemove);
+            }
+            else
+            {
+                current = current.Next;
+            }
+        }
+    }
+
+    static void PrintLinkedList(LinkedList<int> linkedList)
+    {
+        foreach (int value in linkedList)
+        {
+            Console.WriteLine(value);
+        }
+    }
+}
