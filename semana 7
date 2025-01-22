@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+
+class BalanceoParentesis
+{
+    public static bool EstaBalanceado(string formula)
+    {
+        Stack<char> pila = new Stack<char>();
+
+        foreach (char c in formula)
+        {
+            if (c == '(' || c == '[' || c == '{')
+            {
+                pila.Push(c);
+            }
+            else if (c == ')' || c == ']' || c == '}')
+            {
+                if (pila.Count == 0) return false;
+
+                char top = pila.Pop();
+                if (!EsParCoincidente(top, c))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return pila.Count == 0;
+    }
+
+    private static bool EsParCoincidente(char apertura, char cierre)
+    {
+        return (apertura == '(' && cierre == ')') ||
+               (apertura == '[' && cierre == ']') ||
+               (apertura == '{' && cierre == '}');
+    }
+
+    static void Main(string[] args)
+    {
+        string formula = "{7+(8*5)-[(9-7)+(4+1)]}";
+
+        if (EstaBalanceado(formula))
+        {
+            Console.WriteLine("La fórmula está balanceada.");
+        }
+        else
+        {
+            Console.WriteLine("La fórmula no está balanceada.");
+        }
+
+
+}
